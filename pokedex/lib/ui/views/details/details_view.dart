@@ -68,7 +68,6 @@ class DetailsView extends StackedView<DetailsViewModel> {
             alignment: Alignment.topCenter,
             child: GestureDetector(
               onTap: () {
-                print('babyyyyyyyyyÿ');
                 viewModel.playCry(fullPokemon.cryUrl);
               },
               child: SizedBox(
