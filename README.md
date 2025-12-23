@@ -7,7 +7,7 @@ A mobile Pokédex application that allows users to explore and discover Pokémon
 
 All of this is designed to provide an intuitive and enjoyable experience. By tapping on a Pokémon’s image, users can also hear its cry, making the application more interactive and immersive.
 
-You can download the app by checking the releases of this repository ! (Comming soon...)
+You can download the app by checking the releases of this repository ! (Coming soon...)
 
 ![Image Alt](https://github.com/sweethehe/Pokedex/blob/main/Pokedex_presentation.pdf)
 
