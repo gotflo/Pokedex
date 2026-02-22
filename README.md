@@ -9,7 +9,7 @@ All of this is designed to provide an intuitive and enjoyable experience. By tap
 
 You can download the app by checking the releases of this repository ! (Coming soon...)
 
-A video presentation of the application is also available in the repository for further details (Coming soon...)
+A video presentation of the application is also available in the repository for further details
 
 ![Image Alt](https://github.com/sweethehe/Pokedex/blob/1eb077cb7abe1536208e05a11467dac2351b3e1e/pokedex_presentation.png)
 
