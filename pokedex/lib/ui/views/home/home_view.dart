@@ -160,57 +160,50 @@ class HomeView extends StackedView<HomeViewModel> with $HomeView {
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
       child: Row(
         children: [
-          Expanded(
-            child: _navButton(
-              'Back',
-              enabled: viewModel.canGoPrevious,
-              onPressed: viewModel.previous,
+          _navButton(
+            icon: Icons.chevron_left_rounded,
+            enabled: viewModel.canGoPrevious,
+            onPressed: viewModel.previous,
+          ),
+          const Spacer(),
+          Text(
+            '${viewModel.currentPage} / ${viewModel.totalPages}',
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: mediumColor,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              '${viewModel.currentPage} / ${viewModel.totalPages}',
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: mediumColor,
-              ),
-            ),
-          ),
-          Expanded(
-            child: _navButton(
-              'Next',
-              enabled: viewModel.canGoNext,
-              onPressed: viewModel.next,
-            ),
+          const Spacer(),
+          _navButton(
+            icon: Icons.chevron_right_rounded,
+            enabled: viewModel.canGoNext,
+            onPressed: viewModel.next,
           ),
         ],
       ),
     );
   }
 
-  Widget _navButton(
-    String label, {
+  Widget _navButton({
+    required IconData icon,
     required bool enabled,
     required VoidCallback onPressed,
   }) {
-    return ElevatedButton(
-      onPressed: enabled ? onPressed : null,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: primaryColor,
-        disabledBackgroundColor: primaryColor.withValues(alpha: 0.35),
-        foregroundColor: whiteColor,
-        disabledForegroundColor: whiteColor.withValues(alpha: 0.6),
-        elevation: 0,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+    return GestureDetector(
+      onTap: enabled ? onPressed : null,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: enabled ? primaryColor : primaryColor.withValues(alpha: 0.35),
+          borderRadius: BorderRadius.circular(14),
         ),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        child: Icon(
+          icon,
+          color: enabled ? whiteColor : whiteColor.withValues(alpha: 0.6),
+          size: 28,
+        ),
       ),
     );
   }

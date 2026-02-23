@@ -62,6 +62,8 @@ class DetailsView extends StackedView<DetailsViewModel> {
     );
   }
 
+  // ─── Header ───
+
   Widget _buildHeader(BuildContext context, PokemonModel poke) {
     final displayName = poke.name[0].toUpperCase() + poke.name.substring(1);
     final formattedId = '#${poke.id.toString().padLeft(3, '0')}';
@@ -98,19 +100,45 @@ class DetailsView extends StackedView<DetailsViewModel> {
     );
   }
 
+  // ─── Image Pokémon (tappable pour le cri) ───
+
   Widget _buildPokemonImage(PokemonModel poke, DetailsViewModel viewModel) {
     return GestureDetector(
       onTap: () => viewModel.playCry(poke.cryUrl),
-      child: Hero(
-        tag: 'pokemon-${poke.id}',
-        child: SizedBox(
-          height: 200,
-          width: 200,
-          child: Image.network(poke.image, fit: BoxFit.contain),
-        ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Hero(
+            tag: 'pokemon-${poke.id}',
+            child: SizedBox(
+              height: 200,
+              width: 200,
+              child: Image.network(poke.image, fit: BoxFit.contain),
+            ),
+          ),
+          // Indicateur sonore
+          Positioned(
+            bottom: 4,
+            right: 60,
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.25),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.volume_up_rounded,
+                color: Colors.white,
+                size: 16,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+
+  // ─── Fiche détails (carte blanche) ───
 
   Widget _buildDetailsSheet(PokemonModel poke, Color typeColor) {
     return Expanded(
@@ -128,7 +156,7 @@ class DetailsView extends StackedView<DetailsViewModel> {
               const SizedBox(height: 24),
               _sectionTitle('About', typeColor),
               const SizedBox(height: 16),
-              _buildAboutRow(poke),
+              _buildAboutCards(poke, typeColor),
               const SizedBox(height: 28),
               _sectionTitle('Base Stats', typeColor),
               const SizedBox(height: 16),
@@ -141,6 +169,8 @@ class DetailsView extends StackedView<DetailsViewModel> {
       ),
     );
   }
+
+  // ─── Type chips ───
 
   Widget _buildTypeChips(List<String> types) {
     return Row(
@@ -169,60 +199,95 @@ class DetailsView extends StackedView<DetailsViewModel> {
     );
   }
 
+  // ─── Titre de section avec lignes décoratives ───
+
   Widget _sectionTitle(String title, Color color) {
-    return Text(
-      title,
-      style: TextStyle(
-        color: color,
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      ),
-    );
-  }
-
-  Widget _buildAboutRow(PokemonModel poke) {
-    return IntrinsicHeight(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _aboutItem(Icons.scale_rounded, '${poke.weight} kg', 'Weight'),
-          const VerticalDivider(width: 1, thickness: 1, color: lightColor),
-          _aboutItem(Icons.straighten_rounded, '${poke.height} m', 'Height'),
-        ],
-      ),
-    );
-  }
-
-  Widget _aboutItem(IconData icon, String value, String label) {
-    return Column(
+    return Row(
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 18, color: mediumColor),
-            const SizedBox(width: 8),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: darkColor,
-              ),
+        Expanded(child: Divider(color: color.withValues(alpha: 0.25), thickness: 1)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            title,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
             ),
-          ],
+          ),
         ),
-        const SizedBox(height: 6),
-        Text(
-          label,
-          style: const TextStyle(
-            color: subtitleColor,
-            fontSize: 11,
-            fontWeight: FontWeight.w400,
+        Expanded(child: Divider(color: color.withValues(alpha: 0.25), thickness: 1)),
+      ],
+    );
+  }
+
+  // ─── About : cartes Weight / Height ───
+
+  Widget _buildAboutCards(PokemonModel poke, Color typeColor) {
+    return Row(
+      children: [
+        Expanded(
+          child: _aboutCard(
+            Icons.scale_rounded,
+            '${poke.weight} kg',
+            'Weight',
+            typeColor,
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: _aboutCard(
+            Icons.straighten_rounded,
+            '${poke.height} m',
+            'Height',
+            typeColor,
           ),
         ),
       ],
     );
   }
+
+  Widget _aboutCard(IconData icon, String value, String label, Color accent) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.07),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 22, color: accent),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: darkColor,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              color: subtitleColor,
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── Base Stats ───
 
   Widget _buildStatBar(String statKey, int value, Color color) {
     const statLabels = {
