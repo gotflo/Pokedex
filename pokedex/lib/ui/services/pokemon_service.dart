@@ -13,18 +13,21 @@ class PokemonService {
       final data = jsonDecode(response.body);
       final List results = data['results'];
 
-      return results.asMap().entries.map((entry) {
-        int pokemonId = entry.key + 1 + offset;
+      return results.map((entry) {
+        final url = entry['url'] as String;
+        final segments = url.split('/').where((s) => s.isNotEmpty).toList();
+        final pokemonId = int.parse(segments.last);
 
         return PokemonModel(
           id: pokemonId,
-          name: entry.value['name'],
+          name: entry['name'],
           image:
               "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$pokemonId.png",
           height: 0,
           weight: 0,
           types: [],
-          stats: {}, cryUrl: '',
+          stats: {},
+          cryUrl: '',
         );
       }).toList();
     } else {
@@ -39,7 +42,6 @@ class PokemonService {
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
-
       return PokemonModel.fromJson(json);
     } else {
       throw Exception('Détails introuvables');

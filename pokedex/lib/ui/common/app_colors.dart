@@ -24,16 +24,52 @@ const Color steelTypeColor = Color(0xFFB7B9D0);
 const Color waterTypeColor = Color(0xFF6493EB);
 
 // Grayscale
-const Color darkColor = Color(0xFF212121);
+const Color darkColor = Color(0xFF303943);
 const Color mediumColor = Color(0xFF666666);
 const Color lightColor = Color(0xFFE0E0E0);
-const Color backgroundColor = Color(0xFFEFEFEF);
+const Color backgroundColor = Color(0xFFF5F5F5);
 const Color whiteColor = Color(0xFFFFFFFF);
+const Color subtitleColor = Color(0xFFAAAAAA);
 
-// Basic Colors
-const Color kcPrimaryColorDark = Color(0xFF300151);
-const Color kcDarkGreyColor = Color(0xFF1A1B1E);
-const Color kcMediumGrey = Color(0xFF474A54);
-const Color kcLightGrey = Color.fromARGB(255, 187, 187, 187);
-const Color kcVeryLightGrey = Color(0xFFE3E3E3);
-const Color kcBackgroundColor = kcDarkGreyColor;
+Color getTypeColor(String type) {
+  switch (type.toLowerCase()) {
+    case 'grass':
+      return grassTypeColor;
+    case 'fire':
+      return fireTypeColor;
+    case 'water':
+      return waterTypeColor;
+    case 'bug':
+      return bugTypeColor;
+    case 'normal':
+      return normalTypeColor;
+    case 'poison':
+      return poisonTypeColor;
+    case 'electric':
+      return electricTypeColor;
+    case 'ground':
+      return groundTypeColor;
+    case 'fairy':
+      return fairyTypeColor;
+    case 'fighting':
+      return fightingTypeColor;
+    case 'psychic':
+      return psychicTypeColor;
+    case 'rock':
+      return rockTypeColor;
+    case 'ghost':
+      return ghostTypeColor;
+    case 'ice':
+      return iceTypeColor;
+    case 'dragon':
+      return dragonTypeColor;
+    case 'dark':
+      return darkTypeColor;
+    case 'steel':
+      return steelTypeColor;
+    case 'flying':
+      return flyingTypeColor;
+    default:
+      return normalTypeColor;
+  }
+}

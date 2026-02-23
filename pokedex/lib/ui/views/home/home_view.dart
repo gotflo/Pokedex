@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/app/app.router.dart';
-import 'package:pokedex/ui/common/custom_button.dart';
+import 'package:pokedex/ui/common/app_colors.dart';
 import 'package:pokedex/ui/common/pokemon_card.dart';
 import 'package:stacked/stacked.dart';
-import 'package:pokedex/ui/common/app_colors.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'home_viewmodel.dart';
 import 'home_view.form.dart';
@@ -20,147 +19,198 @@ class HomeView extends StackedView<HomeViewModel> with $HomeView {
       onTap: () => FocusScope.of(context).unfocus(),
       behavior: HitTestBehavior.opaque,
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(100),
-          child: AppBar(
-            backgroundColor: primaryColor,
-            centerTitle: false,
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Image.asset("assets/icons/pokeball_black.png",
-                  color: whiteColor),
-            ),
-            leadingWidth: 34,
-            title: const Text(
-              "Pokedex",
-              style: TextStyle(
-                color: whiteColor,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(80.0),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  child: Row(
-                    children: [
-                      //* Search bar
-                      Expanded(
-                        child: SizedBox(
-                          height: 45,
-                          child: Material(
-                            elevation: 4,
-                            shadowColor: Colors.black.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(20),
-                            child: TextField(
-                              controller: searchController,
-                              cursorColor: primaryColor,
-                              cursorHeight: 20,
-                              textAlignVertical: TextAlignVertical.center,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                prefixIcon: const Icon(
-                                  Icons.search,
-                                  color: primaryColor,
-                                ),
-                                hintText: "Search",
-                                fillColor: whiteColor,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
+        backgroundColor: backgroundColor,
+        body: Column(
+          children: [
+            _buildRedHeader(),
+            const SizedBox(height: 12),
+            Expanded(child: _buildBody(viewModel)),
+            if (!viewModel.isBusy && viewModel.totalPages > 1)
+              _buildPagination(viewModel),
+          ],
+        ),
+      ),
+    );
+  }
 
-                      //* Sort button
-                      Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: whiteColor,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 1,
-                                blurRadius: 6,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: const Text("#",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: primaryColor))),
-                    ],
+  // ─── Header rouge (titre + barre de recherche) ───
+
+  Widget _buildRedHeader() {
+    return Container(
+      decoration: const BoxDecoration(
+        color: primaryColor,
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/icons/pokeball_black.png',
+                    width: 28,
+                    height: 28,
+                    color: whiteColor,
                   ),
-                )),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'Pokédex',
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: whiteColor,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildSearchBar(),
+            ],
           ),
         ),
-        body: viewModel.isBusy
-            ? const Center(
-                child: CircularProgressIndicator(
-                  color: primaryColor,
-                ),
-              )
-            : Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 1,
-                        ),
-                        itemCount: viewModel.pokemons.length,
-                        itemBuilder: (context, index) {
-                          final pokemon = viewModel.pokemons[index];
+      ),
+    );
+  }
 
-                          return GestureDetector(
-                            onTap: () {
-                              viewModel.navigationService
-                                  .navigateToDetailsView(pokemon: pokemon);
-                            },
-                            child: pokemonCard(
-                                pokemon.id.toString().padLeft(3, '0'),
-                                pokemon.name,
-                                pokemon.image),
-                          );
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          customButton(
-                            text: "Back",
-                            onPressed: () {
-                              viewModel.previous();
-                            },
-                          ),
-                          customButton(
-                            text: "Next",
-                            onPressed: () {
-                              viewModel.next();
-                            },
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+  Widget _buildSearchBar() {
+    return Container(
+      height: 44,
+      decoration: BoxDecoration(
+        color: whiteColor,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: TextField(
+        controller: searchController,
+        cursorColor: primaryColor,
+        style: const TextStyle(fontSize: 14, color: darkColor),
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+          prefixIcon: const Icon(Icons.search_rounded, color: primaryColor),
+          hintText: 'Rechercher un Pokémon...',
+          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+
+  // ─── Contenu principal ───
+
+  Widget _buildBody(HomeViewModel viewModel) {
+    if (viewModel.isBusy) {
+      return const Center(
+        child: CircularProgressIndicator(color: primaryColor, strokeWidth: 2.5),
+      );
+    }
+
+    if (!viewModel.hasResults) {
+      return _buildEmptyState();
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.82,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      itemCount: viewModel.pokemons.length,
+      itemBuilder: (context, index) {
+        final pokemon = viewModel.pokemons[index];
+        return PokemonCard(
+          id: pokemon.id,
+          name: pokemon.name,
+          imageUrl: pokemon.image,
+          onTap: () {
+            viewModel.navigationService.navigateToDetailsView(pokemon: pokemon);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.catching_pokemon, size: 64, color: Colors.grey.shade300),
+          const SizedBox(height: 12),
+          const Text(
+            'Aucun Pokémon trouvé',
+            style: TextStyle(
+              color: mediumColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── Pagination ───
+
+  Widget _buildPagination(HomeViewModel viewModel) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: _navButton(
+              'Back',
+              enabled: viewModel.canGoPrevious,
+              onPressed: viewModel.previous,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              '${viewModel.currentPage} / ${viewModel.totalPages}',
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: mediumColor,
               ),
+            ),
+          ),
+          Expanded(
+            child: _navButton(
+              'Next',
+              enabled: viewModel.canGoNext,
+              onPressed: viewModel.next,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _navButton(
+    String label, {
+    required bool enabled,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton(
+      onPressed: enabled ? onPressed : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primaryColor,
+        disabledBackgroundColor: primaryColor.withValues(alpha: 0.35),
+        foregroundColor: whiteColor,
+        disabledForegroundColor: whiteColor.withValues(alpha: 0.6),
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
       ),
     );
   }

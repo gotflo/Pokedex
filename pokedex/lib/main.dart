@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pokedex/app/app.bottomsheets.dart';
 import 'package:pokedex/app/app.dialogs.dart';
 import 'package:pokedex/app/app.locator.dart';
@@ -21,6 +22,15 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: Routes.startupView,
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        textTheme: GoogleFonts.poppinsTextTheme(),
+        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFDC0A2D),
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
+      ),
       onGenerateRoute: StackedRouter().onGenerateRoute,
       navigatorKey: StackedService.navigatorKey,
       navigatorObservers: [StackedService.routeObserver],
